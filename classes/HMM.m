@@ -34,8 +34,15 @@ classdef HMM < handle
         function y = sensor_reading(obj)
             % Robot position
             robot_pos = obj.Robot.Robot_idx;
-            % Sensor reading is argmax B(x)
-            [val, y] = max(obj.B(robot_pos,:));
+            % Sensor reading is argmax B(x); if there are multiple, choose
+            % randomly
+            maxval = max(obj.B(robot_pos,:));
+            possible_ys = find(obj.B(robot_pos,:)==maxval);
+            if length(possible_ys)==1
+                y = possible_ys;
+            else
+                y = randsample(possible_ys, 1);
+            end
             obj.y = y;
             % Find sensors that detected obstacles
             obj.sensorbeep = display_sensor(obj.y, obj.Robot.n_sensors);
