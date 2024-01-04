@@ -1,16 +1,12 @@
-function pi0 = calculate_pi0(grid_data)
+function pi0 = calculate_pi0(simdata)
 
-    N = size(grid_data, 1);
-    pi0 = ones(N*N, 1);
+    pi0 = zeros(simdata.n_states, 1);
     
-    for i = 1:N
-        for j = 1:N
-            if grid_data(j,i) == 1 % obstacle
-                idx = idx_from_coords([j, i], [N, N]);
-                pi0(idx) = 0;
-            end
-        end
-    end
+    % Get the states where there are no obstacles
+    possible_coords = setdiff(1:simdata.n_states, simdata.obstacles_ids);
+    
+    pi0(possible_coords) = 1;
+    
     % Uniform distribution over free squares
     pi0 = pi0/sum(pi0);
     
