@@ -12,7 +12,7 @@ function hmm_main()
     plotOutputGrid(zeros(simdata.N)); % Plot estimated probability distribution
     
     plotSensorGrid([]); % Plot sensors that are detecting obstacles
-    
+
     mainLoop();
     
 %--------------------------------------------------------------------------
@@ -21,12 +21,12 @@ function hmm_main()
     function mainLoop()
         iter = 0;
         cnt = 0;
-
+        
         uiwait(); % Wait until start button is clicked
         
         simdata.grid_size = [simdata.N, simdata.N];
         simdata.n_states = simdata.N*simdata.N;
-
+        
         % Calculate obstacle ids (list)
         simdata.obstacle_matrix = flipud(simdata.gridData); % flip matrix vertically so that it matches display coordinates
         simdata.obstacles_ids = find(simdata.obstacle_matrix'==1); % get indices where obstacles are
@@ -223,13 +223,12 @@ function hmm_main()
 
         % Create UI elements
         startButton = uicontrol('Style', 'pushbutton', 'String', 'Start', 'Position', [100, 50, 100, 30], 'Callback', @startCallback);
-        endButton = uicontrol('Style', 'pushbutton', 'String', 'End', 'Position', [200, 50, 100, 30], 'Callback', @endCallback);
+        agentButton = uicontrol('Style', 'pushbutton', 'String', 'Initial Position', 'Position', [200, 50, 100, 30], 'Callback', @agentCallback);
         oneStepButton = uicontrol('Style', 'pushbutton', 'String', 'One step', 'Position', [300, 50, 100, 30], 'Callback', @oneStepCallback);
         runButton = uicontrol('Style', 'pushbutton', 'String', 'Run', 'Position', [400, 50, 100, 30], 'Callback', @runCallback);
         stopButton = uicontrol('Style', 'pushbutton', 'String', 'Stop', 'Position', [500, 50, 100, 30], 'Callback', @stopCallback);
         clearButton = uicontrol('Style', 'pushbutton', 'String', 'Clear', 'Position', [600, 50, 100, 30], 'Callback', @clearCallback);
-
-
+        endButton = uicontrol('Style', 'pushbutton', 'String', 'End', 'Position', [700, 50, 100, 30], 'Callback', @endCallback);
         hold off;
         % fprintf('End of plotGrid.\n');
     end
@@ -445,6 +444,46 @@ end
         disp('End button pressed');
         % Implement the functionality for "End" button here
         simdata.running = 0;
+    end
+
+    function agentCallback(~, ~)
+        pos_free = 0;
+
+        while pos_free == 0
+
+            user_input = inputdlg({'Enter the agents initial position x:',...
+                                    'Enter the agents initial position y:',...
+                                    'Use random position (0 for no, 1 for yes):',...
+                                  }, 'User input', [1 60; 1 60; 1 60], {'0', '0', '0'});
+            coords_x = str2double(user_input{1});
+            coords_y = str2double(user_input{2});
+            is_rand = str2double(user_input{3})
+            
+            if ~isnumeric(is_rand) || (is_rand~=0 && is_rand~=1) || rem(is_rand, 1) ~= 0
+                error('Random position choice must be 0 or 1.');
+            end
+            
+            if is_rand % use position from HMMclass
+                pos_free = 1;
+            else
+                % Check if pos_x and pos_y is a positive integer
+                if ~isnumeric(coords_x) || coords_x <= 0 || rem(coords_x, 1) ~= 0
+                    error('X must be a positive integer.');
+                end
+                if ~isnumeric(coords_y) || coords_y <= 0 || rem(coords_y, 1) ~= 0
+                    error('Y must be a positive integer.');
+                end
+                % Check if position is occupied by obstacle
+                pos_free = (simdata.gridData(coords_y, coords_x) == 0);
+                if pos_free
+                    simdata.HMMclass.Robot.Robot_coords = [coords_x, coords_y];
+                    disp('Valid initial agent position.');
+                end
+            end
+        end
+        
+        plotAgent();
+
     end
 
 end
