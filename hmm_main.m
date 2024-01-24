@@ -41,7 +41,8 @@ function hmm_main()
         % Create base HMM class
         %pi = ones(simdata.grid_size(1)*simdata.grid_size(2), 1)./(simdata.grid_size(1)*simdata.grid_size(2)); % pi is a uniform distribution
         pi0 = calculate_pi0(simdata);
-        pi0_matrix = flipud(matrix_from_pi0(pi0, simdata.N)');
+        % pi0_matrix = flipud(matrix_from_pi0(pi0, simdata.N)');
+        pi0_matrix = matrix_from_pi0(pi0, simdata.N)';
         plotOutputGrid(pi0_matrix);
         robot = Robot(simdata, simdata.n_sensors, simdata.n_moves, simdata.err_prob);
         simdata.HMMclass = HMM(simdata, robot, simdata.moving_probs, pi0);
@@ -223,11 +224,11 @@ function hmm_main()
 
         % Create UI elements
         startButton = uicontrol('Style', 'pushbutton', 'String', 'Start', 'Position', [100, 50, 100, 30], 'Callback', @startCallback);
-        agentButton = uicontrol('Style', 'pushbutton', 'String', 'Initial Position', 'Position', [200, 50, 100, 30], 'Callback', @agentCallback);
-        oneStepButton = uicontrol('Style', 'pushbutton', 'String', 'One step', 'Position', [300, 50, 100, 30], 'Callback', @oneStepCallback);
-        runButton = uicontrol('Style', 'pushbutton', 'String', 'Run', 'Position', [400, 50, 100, 30], 'Callback', @runCallback);
-        stopButton = uicontrol('Style', 'pushbutton', 'String', 'Stop', 'Position', [500, 50, 100, 30], 'Callback', @stopCallback);
-        clearButton = uicontrol('Style', 'pushbutton', 'String', 'Clear', 'Position', [600, 50, 100, 30], 'Callback', @clearCallback);
+        agentButton = uicontrol('Style', 'pushbutton', 'String', 'Initial Position', 'Position', [200, 50, 200, 30], 'Callback', @agentCallback);
+        oneStepButton = uicontrol('Style', 'pushbutton', 'String', 'One step', 'Position', [400, 50, 100, 30], 'Callback', @oneStepCallback);
+        runButton = uicontrol('Style', 'pushbutton', 'String', 'Run', 'Position', [500, 50, 100, 30], 'Callback', @runCallback);
+        stopButton = uicontrol('Style', 'pushbutton', 'String', 'Stop', 'Position', [600, 50, 100, 30], 'Callback', @stopCallback);
+        % clearButton = uicontrol('Style', 'pushbutton', 'String', 'Clear', 'Position', [600, 50, 100, 30], 'Callback', @clearCallback);
         endButton = uicontrol('Style', 'pushbutton', 'String', 'End', 'Position', [700, 50, 100, 30], 'Callback', @endCallback);
         hold off;
         % fprintf('End of plotGrid.\n');
