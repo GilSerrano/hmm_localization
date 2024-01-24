@@ -246,7 +246,8 @@ function hmm_main()
         
         colormap(simdata.s2, customColormap); % Apply the custom colormap
         colorbar; % Add a colorbar to show the mapping of values to colors
-        caxis([0, 1]);
+        lim_sup = min(1, max(probabilityMatrix, [], 'all')+0.001);
+        caxis([0, lim_sup]);
         
         hold off; % Release the hold on the plot
         set(gca,'YDir','normal'); % Plot image with Y axis normal - not upside down
