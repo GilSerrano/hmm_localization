@@ -46,7 +46,7 @@ function hmm_main()
         plotOutputGrid(pi0_matrix);
         robot = Robot(simdata, simdata.n_sensors, simdata.n_moves, simdata.err_prob);
         simdata.HMMclass = HMM(simdata, robot, simdata.moving_probs, pi0);
-
+        plotAgent()
 
         while simdata.running ~= 0 && iter < simdata.maxT
     
